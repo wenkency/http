@@ -15,7 +15,7 @@ public interface IObjectCallback {
     /**
      * 请求成功回调事件处理
      */
-    void onSuccess(Object object);
+    void onSuccess(Object object,Class clazz);
 
     /**
      * 请求失败回调事件处理

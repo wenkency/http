@@ -1,8 +1,5 @@
 package cn.carhouse.http_sample.http;
 
-import android.os.Handler;
-import android.os.Looper;
-
 import cn.carhouse.http.callback.StringCallback;
 import cn.carhouse.http.core.RequestParams;
 
@@ -18,24 +15,25 @@ import cn.carhouse.http.core.RequestParams;
  * ================================================================
  */
 public abstract class BeanCallback<T> extends StringCallback<T> {
-    private static Handler mHandler = new Handler(Looper.getMainLooper());
 
     @Override
     public void onError(final Throwable e) {
-        mHandler.post(new Runnable() {
+        HandlerUtils.post(new Runnable() {
             @Override
             public void run() {
                 onFailed(e);
+                HandlerUtils.cancel(this);
             }
         });
     }
 
     @Override
     public void onSucceed(RequestParams params, final String result, boolean isSuccessful, int code) {
-        mHandler.post(new Runnable() {
+        HandlerUtils.post(new Runnable() {
             @Override
             public void run() {
                 onSucceed(result);
+                HandlerUtils.cancel(this);
             }
         });
     }

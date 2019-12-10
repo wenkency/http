@@ -56,4 +56,30 @@ public class ObjectPresenter {
     public static <T> void post(String url, Class clazz, IObjectCallback callback) {
         request(RequestType.POST, url, null, clazz, callback);
     }
+
+
+    public static <T> void put(String url, Object object, Class clazz, IObjectCallback callback) {
+        request(RequestType.PUT, url, RequestUtil.getObjParams(object), clazz, callback);
+    }
+
+    public static <T> void put(String url, String key, String value, Class clazz, IObjectCallback callback) {
+        request(RequestType.PUT, url, RequestUtil.getObjParams(key, value), clazz, callback);
+    }
+
+    public static <T> void put(String url, Class clazz, IObjectCallback callback) {
+        request(RequestType.PUT, url, null, clazz, callback);
+    }
+
+    public static <T> void delete(String url, Object object, Class clazz, IObjectCallback callback) {
+        request(RequestType.DELETE, url, RequestUtil.getObjParams(object), clazz, callback);
+    }
+
+    public static <T> void delete(String url, String key, String value, Class clazz, IObjectCallback callback) {
+        request(RequestType.DELETE, url, RequestUtil.getObjParams(key, value), clazz, callback);
+    }
+
+    public static <T> void delete(String url, Class clazz, IObjectCallback callback) {
+        request(RequestType.DELETE, url, null, clazz, callback);
+    }
+
 }

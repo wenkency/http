@@ -166,6 +166,7 @@ public class RequestParams {
     }
 
     public void setObjectCallback(IObjectCallback objectCallback) {
+        // 这里包装一下
         this.objectCallback = objectCallback;
     }
 

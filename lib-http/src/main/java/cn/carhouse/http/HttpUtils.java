@@ -128,13 +128,13 @@ public class HttpUtils {
         return this;
     }
 
-    public HttpUtils objectCallback(IObjectCallback objectCallback) {
+    public <I extends IObjectCallback> HttpUtils objectCallback(I objectCallback) {
         this.mParams.setObjectCallback(objectCallback);
         return this;
     }
 
-    public HttpUtils autoCancel(boolean isAutoCancle) {
-        this.mParams.setAutoCancel(isAutoCancle);
+    public HttpUtils autoCancel(boolean autoCancel) {
+        this.mParams.setAutoCancel(autoCancel);
         return this;
     }
 

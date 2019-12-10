@@ -10,7 +10,6 @@ import cn.carhouse.http.core.ICallback;
 import cn.carhouse.http.core.IObjectCallback;
 import cn.carhouse.http.core.RequestParams;
 import cn.carhouse.http.util.CallUtil;
-import cn.carhouse.http.util.GsonUtil;
 import cn.carhouse.http.util.ParamsUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -34,8 +33,12 @@ public class WarpCallback implements Callback {
      */
     private void checkCache(RequestParams params) {
         if (params.isCache()) {
-            String cacheJson = CacheUtil.getJson(params.getContext(), params.getUrl());
+            final String cacheJson = CacheUtil.getJson(params.getContext(), params.getUrl());
             if (!TextUtils.isEmpty(cacheJson)) {
+                // 添加ObjectPresent处理
+                if (handleResult(cacheJson)) {
+                    return;
+                }
                 ICallback callback = params.getCallback();
                 if (callback != null) {
                     callback.onSucceed(mParams, cacheJson, true, 200);
@@ -45,15 +48,14 @@ public class WarpCallback implements Callback {
         }
     }
 
+
     @Override
-    public void onFailure(Call call, IOException e) {
+    public void onFailure(Call call, final IOException e) {
         // 将Call移除
         CallUtil.getInstance().remove(call);
 
-        IObjectCallback objectCallback = mParams.getObjectCallback();
-        Class clazz = mParams.getClazz();
-        if (objectCallback != null && clazz != null) {
-            objectCallback.onError(e);
+        // 添加ObjectPresent处理
+        if (handleError(e)) {
             return;
         }
 
@@ -63,6 +65,7 @@ public class WarpCallback implements Callback {
             callback.onAfter();
         }
     }
+
 
     @Override
     public void onResponse(Call call, Response response) throws IOException {
@@ -75,32 +78,49 @@ public class WarpCallback implements Callback {
 
         HttpLog.e("response-->" + result);
 
-        // 是不是要统一处理
-        IObjectCallback objectCallback = mParams.getObjectCallback();
-        Class clazz = mParams.getClazz();
-        if (objectCallback != null && clazz != null) {
-            try {
-                Object object = GsonUtil.getGson().fromJson(result, clazz);
-                objectCallback.onSuccess(object);
-            } catch (Exception e) {
-                e.printStackTrace();
-                objectCallback.onError(new RuntimeException("解析数据失败"));
-            }
+        // 添加ObjectPresent处理
+        if (handleResult(result)) {
             return;
         }
-
 
         ICallback callback = mParams.getCallback();
         if (callback != null) {
             callback.onSucceed(mParams, result, response.isSuccessful(), response.code());
             callback.onAfter();
         }
-        // 比较缓存，如果一样就不更新数据
         // 缓存数据
         if (mParams.isCache()) {
             CacheUtil.putJson(mParams.getContext(), mParams.getUrl(), result);
         }
 
+    }
+
+    /**
+     * 单独处理ObjectPresent回调
+     */
+    private boolean handleError(final IOException e) {
+        final IObjectCallback objectCallback = mParams.getObjectCallback();
+        Class clazz = mParams.getClazz();
+        if (objectCallback != null && clazz != null) {
+            objectCallback.onError(e);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 单独处理ObjectPresent回调
+     */
+    private boolean handleResult(String json) {
+        // 是不是要统一处理
+        final IObjectCallback objectCallback = mParams.getObjectCallback();
+        Class clazz = mParams.getClazz();
+        if (objectCallback != null && clazz != null) {
+            // 直接返回结果
+            objectCallback.onSuccess(json, clazz);
+            return true;
+        }
+        return false;
     }
 
 }
