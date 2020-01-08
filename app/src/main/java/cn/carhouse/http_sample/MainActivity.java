@@ -10,6 +10,7 @@ import java.util.List;
 
 import cn.carhouse.http.HttpUtils;
 import cn.carhouse.http.ObjectPresenter;
+import cn.carhouse.http.OkHttpPresenter;
 import cn.carhouse.http.core.IObjectCallback;
 import cn.carhouse.http_sample.http.BeanCallback;
 import cn.carhouse.http_sample.http.ObjectCallback;
@@ -28,8 +29,8 @@ public class MainActivity extends AppCompatActivity implements IObjectCallback {
         // 自动取消要初始化一下
         HttpUtils.init(getApplication());
         // 测试
-        MainPresenter  presenter = new MainPresenter(this);
-        MainOKPresenter   okPresenter = new MainOKPresenter(this);
+        MainPresenter presenter = new MainPresenter(this);
+        MainOKPresenter okPresenter = new MainOKPresenter(this);
         // 间接回调
         presenter.test(this);
         // 直接回调
@@ -44,6 +45,10 @@ public class MainActivity extends AppCompatActivity implements IObjectCallback {
                 Toast.makeText(MainActivity.this, "" + e.toString(), Toast.LENGTH_SHORT).show();
             }
         });
+
+        // 如果通过单例直接调用请求，不会自动取消
+        // ObjectPresenter.getInstance().get();
+        // OkHttpPresenter.getInstance().get();
     }
 
     @Override

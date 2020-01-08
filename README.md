@@ -46,6 +46,9 @@ public class MainActivity extends AppCompatActivity implements IObjectCallback {
                 Toast.makeText(MainActivity.this, "" + e.toString(), Toast.LENGTH_SHORT).show();
             }
         });
+        // 如果通过单例直接调用请求，不会自动取消，不建议这样使用
+        // ObjectPresenter.getInstance().get();
+        // OkHttpPresenter.getInstance().get();
     }
     // 间接成功回调
     @Override
