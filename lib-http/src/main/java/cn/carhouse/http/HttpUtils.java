@@ -74,6 +74,11 @@ public class HttpUtils {
         return this;
     }
 
+    public HttpUtils tag(Object tag) {
+        this.mParams.setTag(tag);
+        return this;
+    }
+
     /**
      * 设置请求参数
      */

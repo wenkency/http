@@ -11,7 +11,6 @@ import okhttp3.Call;
 public class CallUtil {
     private static CallUtil instance;
 
-    private Object mTag;
 
     public static CallUtil getInstance() {
         if (instance == null) {
@@ -26,6 +25,8 @@ public class CallUtil {
 
     // 所有请求的Call
     private List<Call> mCalls = new ArrayList<>();
+    // 要取消的网络
+    private List<Call> mCancelCalls = new ArrayList<>(1);
 
     public void add(Call call) {
         mCalls.add(call);
@@ -39,20 +40,6 @@ public class CallUtil {
         mCalls.clear();
     }
 
-    /**
-     * 设置TAG，要在请求页面设置
-     *
-     * @param tag
-     */
-    public void setTag(Object tag) {
-        // onCreate 和 onResume 设置
-        this.mTag = tag;
-    }
-
-    public Object getTag() {
-        // onPause
-        return mTag;
-    }
 
     /**
      * 取消网络请求，在onDesdroid
@@ -65,22 +52,23 @@ public class CallUtil {
                 if (mCalls == null || mCalls.size() <= 0) {
                     return;
                 }
-                List<Call> calls = new ArrayList<>(1);
+                mCancelCalls.clear();
                 for (Call call : mCalls) {
                     // 已经取消了的
                     if (call.isCanceled()) {
-                        calls.add(call);
+                        mCancelCalls.add(call);
                         continue;
                     }
                     if (tag.equals(call.request().tag())) {
                         call.cancel();
-                        calls.add(call);
+                        mCancelCalls.add(call);
                     }
                 }
                 // 从集合中移除
-                if (calls.size() > 0) {
-                    mCalls.removeAll(calls);
+                if (mCancelCalls.size() > 0) {
+                    mCalls.removeAll(mCancelCalls);
                 }
+                mCancelCalls.clear();
             }
         } catch (Throwable e) {
             e.printStackTrace();

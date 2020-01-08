@@ -1,7 +1,10 @@
 package cn.carhouse.http_sample.http;
 
+import java.util.Map;
+
 import cn.carhouse.http.callback.StringCallback;
 import cn.carhouse.http.core.RequestParams;
+import cn.carhouse.http.core.RequestType;
 
 /**
  * ================================================================
@@ -15,6 +18,12 @@ import cn.carhouse.http.core.RequestParams;
  * ================================================================
  */
 public abstract class BeanCallback<T> extends StringCallback<T> {
+
+    @Override
+    public void onBefore(RequestParams params, RequestType type) {
+        Map<String, String> headerParams = params.getHeaderParams();
+
+    }
 
     @Override
     public void onError(final Throwable e) {

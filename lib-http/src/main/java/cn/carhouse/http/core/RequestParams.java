@@ -37,6 +37,8 @@ public class RequestParams {
 
     private Object mObjParams;
 
+    private Object mTag;
+
     /**
      * 这个是Object统一处理
      */
@@ -122,6 +124,14 @@ public class RequestParams {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public Object getTag() {
+        return mTag;
+    }
+
+    public void setTag(Object mTag) {
+        this.mTag = mTag;
     }
 
     /**

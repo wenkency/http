@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import cn.carhouse.http.util.CallUtil;
+import cn.carhouse.http.util.TagUtils;
 
 /**
  * ================================================================
@@ -20,13 +21,10 @@ import cn.carhouse.http.util.CallUtil;
  */
 public class HttpLifecycleCallbacks implements Application.ActivityLifecycleCallbacks {
 
-    private String currentKey;
-    private String lastKey;
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        currentKey = activity.hashCode() + "http_cancel";
-        CallUtil.getInstance().setTag(currentKey);
+
     }
 
     @Override
@@ -35,24 +33,15 @@ public class HttpLifecycleCallbacks implements Application.ActivityLifecycleCall
 
     @Override
     public void onActivityResumed(Activity activity) {
-        currentKey = activity.hashCode() + "http_cancel";
-        // 打TAG
-        CallUtil.getInstance().setTag(currentKey);
+
     }
 
     @Override
     public void onActivityPaused(Activity activity) {
-        lastKey = activity.hashCode() + "http_cancel";
     }
 
     @Override
     public void onActivityStopped(Activity activity) {
-        if (!TextUtils.isEmpty(lastKey)) {
-            // 这个要取消掉
-            if (checkNet(activity)) {
-                CallUtil.getInstance().cancel(lastKey);
-            }
-        }
 
     }
 
@@ -63,13 +52,12 @@ public class HttpLifecycleCallbacks implements Application.ActivityLifecycleCall
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-
-    }
-
-    public static boolean checkNet(Activity activity) {
-        if (activity == null || activity.getWindow() == null || activity.getWindow().getDecorView() == null) {
-            return true;
+        // 根据TAG取消
+        String tag = TagUtils.getTag(activity);
+        if (!TextUtils.isEmpty(tag)) {
+            CallUtil.getInstance().cancel(tag);
         }
-        return activity.getWindow().getDecorView().getTag(R.id.net_cancel) == null;
     }
+
+
 }

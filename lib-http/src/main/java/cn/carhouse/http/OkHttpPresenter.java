@@ -1,13 +1,15 @@
 package cn.carhouse.http;
 
 
+import android.app.Activity;
 
 import java.util.Map;
 
-import cn.carhouse.http.core.RequestType;
 import cn.carhouse.http.callback.FileCallback;
 import cn.carhouse.http.callback.StringCallback;
+import cn.carhouse.http.core.RequestType;
 import cn.carhouse.http.util.RequestUtil;
+import cn.carhouse.http.util.TagUtils;
 
 
 /**
@@ -16,6 +18,24 @@ import cn.carhouse.http.util.RequestUtil;
 
 public class OkHttpPresenter {
 
+    private String mTag;
+
+    private static OkHttpPresenter instance = new OkHttpPresenter();
+
+    public OkHttpPresenter(Activity activity) {
+        mTag = TagUtils.getTag(activity);
+    }
+
+    private OkHttpPresenter() {
+    }
+
+    public static OkHttpPresenter getInstance() {
+        return instance;
+    }
+
+    public void setTag(String tag) {
+        this.mTag = tag;
+    }
 
     /**
      * get请求
@@ -26,29 +46,30 @@ public class OkHttpPresenter {
      * @param isCache  是否要缓存
      * @param <T>
      */
-    public static <T> void get(String url, Map<String, Object> params, StringCallback<T> callback, boolean isCache, boolean isAutoCancel) {
+    public <T> void get(String url, Map<String, Object> params, StringCallback<T> callback, boolean isCache, boolean isAutoCancel) {
         HttpUtils.with()
                 .url(url)
                 .type(RequestType.GET)
                 .params(params)
                 .cache(isCache)
+                .tag(mTag)
                 .autoCancel(isAutoCancel)
                 .execute(callback);
     }
 
-    public static <T> void get(String url, Map<String, Object> params, StringCallback<T> callback) {
+    public <T> void get(String url, Map<String, Object> params, StringCallback<T> callback) {
         get(url, params, callback, false, true);
     }
 
-    public static <T> void get(String url, Object object, StringCallback<T> callback) {
+    public <T> void get(String url, Object object, StringCallback<T> callback) {
         get(url, RequestUtil.getObjParams(object), callback, false, true);
     }
 
-    public static <T> void get(String url, String key, String value, StringCallback<T> callback) {
+    public <T> void get(String url, String key, String value, StringCallback<T> callback) {
         get(url, RequestUtil.getObjParams(key, value), callback, false, true);
     }
 
-    public static <T> void get(String url, StringCallback<T> callback) {
+    public <T> void get(String url, StringCallback<T> callback) {
         get(url, null, callback);
     }
 
@@ -61,11 +82,11 @@ public class OkHttpPresenter {
      * @param isCache  是否要缓存
      * @param <T>
      */
-    public static <T> void post(String url, Object data, StringCallback<T> callback, boolean isCache, boolean isAutoCancel, boolean isFormat) {
+    public <T> void post(String url, Object data, StringCallback<T> callback, boolean isCache, boolean isAutoCancel, boolean isFormat) {
         post(url, RequestUtil.getObjParams(data), callback, isCache, isAutoCancel, isFormat);
     }
 
-    public static <T> void post(String url, Map<String, Object> params, StringCallback<T> callback, boolean isCache, boolean isAutoCancel, boolean format) {
+    public <T> void post(String url, Map<String, Object> params, StringCallback<T> callback, boolean isCache, boolean isAutoCancel, boolean format) {
         HttpUtils.with().url(url)
                 .params(params)
                 .cache(isCache)
@@ -77,22 +98,22 @@ public class OkHttpPresenter {
     /**
      * Post请求
      */
-    public static <T> void post(String url, Object data, StringCallback<T> callback) {
+    public <T> void post(String url, Object data, StringCallback<T> callback) {
         post(url, data, callback, true);
     }
 
-    public static <T> void post(String url, Object data, StringCallback<T> callback, boolean isFormat) {
+    public <T> void post(String url, Object data, StringCallback<T> callback, boolean isFormat) {
         post(url, data, callback, false, true, isFormat);
     }
 
-    public static <T> void post(String url, String key, String value, StringCallback<T> callback) {
+    public <T> void post(String url, String key, String value, StringCallback<T> callback) {
         post(url, RequestUtil.getObjParams(key, value), callback, false, true, true);
     }
 
     /**
      * Post请求
      */
-    public static <T> void post(String url, StringCallback<T> callback) {
+    public <T> void post(String url, StringCallback<T> callback) {
         post(url, new Object(), callback, false, true, true);
     }
 
@@ -106,11 +127,11 @@ public class OkHttpPresenter {
      * @param isCache  是否要缓存
      * @param <T>
      */
-    public static <T> void put(String url, Object data, StringCallback<T> callback, boolean isCache, boolean isAutoCancel) {
+    public <T> void put(String url, Object data, StringCallback<T> callback, boolean isCache, boolean isAutoCancel) {
         put(url, RequestUtil.getObjParams(data), callback, isCache, isAutoCancel);
     }
 
-    public static <T> void put(String url, Map<String, Object> params, StringCallback<T> callback, boolean isCache, boolean isAutoCancel) {
+    public <T> void put(String url, Map<String, Object> params, StringCallback<T> callback, boolean isCache, boolean isAutoCancel) {
         HttpUtils.with().url(url)
                 .params(params)
                 .type(RequestType.PUT)
@@ -122,18 +143,18 @@ public class OkHttpPresenter {
     /**
      * put请求
      */
-    public static <T> void put(String url, Object data, StringCallback<T> callback) {
+    public <T> void put(String url, Object data, StringCallback<T> callback) {
         put(url, data, callback, false, true);
     }
 
-    public static <T> void put(String url, String key, String value, StringCallback<T> callback) {
+    public <T> void put(String url, String key, String value, StringCallback<T> callback) {
         put(url, RequestUtil.getObjParams(key, value), callback, false, true);
     }
 
     /**
      * put请求
      */
-    public static <T> void put(String url, StringCallback<T> callback) {
+    public <T> void put(String url, StringCallback<T> callback) {
         put(url, new Object(), callback, false, true);
     }
 
@@ -146,11 +167,11 @@ public class OkHttpPresenter {
      * @param isCache  是否要缓存
      * @param <T>
      */
-    public static <T> void delete(String url, Object data, StringCallback<T> callback, boolean isCache, boolean isAutoCancel) {
+    public <T> void delete(String url, Object data, StringCallback<T> callback, boolean isCache, boolean isAutoCancel) {
         delete(url, RequestUtil.getObjParams(data), callback, isCache, isAutoCancel);
     }
 
-    public static <T> void delete(String url, Map<String, Object> params, StringCallback<T> callback, boolean isCache, boolean isAutoCancel) {
+    public <T> void delete(String url, Map<String, Object> params, StringCallback<T> callback, boolean isCache, boolean isAutoCancel) {
         HttpUtils.with().url(url)
                 .params(params)
                 .type(RequestType.DELETE)
@@ -162,18 +183,18 @@ public class OkHttpPresenter {
     /**
      * delete请求
      */
-    public static <T> void delete(String url, Object data, StringCallback<T> callback) {
+    public <T> void delete(String url, Object data, StringCallback<T> callback) {
         delete(url, data, callback, false, true);
     }
 
-    public static <T> void delete(String url, String key, String value, StringCallback<T> callback) {
+    public <T> void delete(String url, String key, String value, StringCallback<T> callback) {
         delete(url, RequestUtil.getObjParams(key, value), callback, false, true);
     }
 
     /**
      * put请求
      */
-    public static <T> void delete(String url, StringCallback<T> callback) {
+    public <T> void delete(String url, StringCallback<T> callback) {
         delete(url, new Object(), callback, false, true);
     }
 
@@ -184,7 +205,7 @@ public class OkHttpPresenter {
      * @param params   上传的参数
      * @param callback 回调
      */
-    public static <T> void upload(String url, Map<String, Object> params, StringCallback<T> callback) {
+    public <T> void upload(String url, Map<String, Object> params, StringCallback<T> callback) {
         HttpUtils.with().url(url)
                 .type(RequestType.UPLOAD)
                 .params(params)
@@ -201,7 +222,7 @@ public class OkHttpPresenter {
      * @param fileName 文件名称
      * @param callback 回调
      */
-    public static void download(String url, String fileDir, String fileName, FileCallback callback) {
+    public void download(String url, String fileDir, String fileName, FileCallback callback) {
         HttpUtils.with().url(url)
                 .type(RequestType.DOWNLOAD)
                 .cache(false)

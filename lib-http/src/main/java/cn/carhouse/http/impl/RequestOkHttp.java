@@ -80,7 +80,10 @@ public class RequestOkHttp implements IRequest {
         }
         // 是不是要自动取消
         if (requestParams.isAutoCancel()) {
-            build.tag(CallUtil.getInstance().getTag());
+            Object tag = requestParams.getTag();
+            if (tag != null) {
+                build.tag(tag);
+            }
         }
         final Request request = build.build();
         // 创建一个回调
@@ -118,7 +121,10 @@ public class RequestOkHttp implements IRequest {
         }
         // 是不是要自动取消
         if (requestParams.isAutoCancel()) {
-            build.tag(CallUtil.getInstance().getTag());
+            Object tag = requestParams.getTag();
+            if (tag != null) {
+                build.tag(tag);
+            }
         }
         final Request request = build.build();
         // 创建一个回调
@@ -145,7 +151,10 @@ public class RequestOkHttp implements IRequest {
                 .post(exMultipartBody);
         // 是不是要自动取消
         if (requestParams.isAutoCancel()) {
-            build.tag(CallUtil.getInstance().getTag());
+            Object tag = requestParams.getTag();
+            if (tag != null) {
+                build.tag(tag);
+            }
         }
         final Request request = build.build();
 
@@ -163,7 +172,10 @@ public class RequestOkHttp implements IRequest {
                 .url(requestParams.getUrl());
         // 是不是要自动取消
         if (requestParams.isAutoCancel()) {
-            build.tag(CallUtil.getInstance().getTag());
+            Object tag = requestParams.getTag();
+            if (tag != null) {
+                build.tag(tag);
+            }
         }
         final Request request = build.build();
         // 创建一个回调
