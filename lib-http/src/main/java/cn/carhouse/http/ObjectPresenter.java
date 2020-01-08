@@ -7,6 +7,7 @@ import java.util.Map;
 
 import cn.carhouse.http.core.IObjectCallback;
 import cn.carhouse.http.core.RequestType;
+import cn.carhouse.http.util.CallUtil;
 import cn.carhouse.http.util.RequestUtil;
 import cn.carhouse.http.util.TagUtils;
 
@@ -16,7 +17,6 @@ import cn.carhouse.http.util.TagUtils;
  */
 
 public class ObjectPresenter {
-    private static ObjectPresenter instance = new ObjectPresenter();
 
     private String mTag;
 
@@ -24,15 +24,25 @@ public class ObjectPresenter {
         mTag = TagUtils.getTag(activity);
     }
 
-    private ObjectPresenter() {
+    public ObjectPresenter() {
     }
 
     public static ObjectPresenter getInstance() {
-        return instance;
+        return new ObjectPresenter();
     }
 
+    /**
+     * 自己设置TAG
+     */
     public void setTag(String tag) {
         this.mTag = tag;
+    }
+
+    /**
+     * 自己取消TAG
+     */
+    public void cancel(String tag) {
+        CallUtil.getInstance().cancel(tag);
     }
 
     /**

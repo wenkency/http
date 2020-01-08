@@ -8,6 +8,7 @@ import java.util.Map;
 import cn.carhouse.http.callback.FileCallback;
 import cn.carhouse.http.callback.StringCallback;
 import cn.carhouse.http.core.RequestType;
+import cn.carhouse.http.util.CallUtil;
 import cn.carhouse.http.util.RequestUtil;
 import cn.carhouse.http.util.TagUtils;
 
@@ -20,21 +21,30 @@ public class OkHttpPresenter {
 
     private String mTag;
 
-    private static OkHttpPresenter instance = new OkHttpPresenter();
 
     public OkHttpPresenter(Activity activity) {
         mTag = TagUtils.getTag(activity);
     }
 
-    private OkHttpPresenter() {
+    public OkHttpPresenter() {
     }
 
     public static OkHttpPresenter getInstance() {
-        return instance;
+        return new OkHttpPresenter();
     }
 
+    /**
+     * 自己设置TAG
+     */
     public void setTag(String tag) {
         this.mTag = tag;
+    }
+
+    /**
+     * 自己取消TAG
+     */
+    public void cancel(String tag) {
+        CallUtil.getInstance().cancel(tag);
     }
 
     /**
