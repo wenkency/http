@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.List;
 
+import cn.carhouse.http.HttpUtils;
 import cn.carhouse.http.ObjectPresenter;
 import cn.carhouse.http.core.IObjectCallback;
 import cn.carhouse.http_sample.http.BeanCallback;
@@ -18,31 +19,20 @@ import cn.carhouse.http_sample.presenter.MainPresenter;
 public class MainActivity extends AppCompatActivity implements IObjectCallback {
 
     private TextView tv;
-    private MainOKPresenter okPresenter;
-    private MainPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        presenter = new MainPresenter(this);
-        okPresenter = new MainOKPresenter(this);
         tv = findViewById(R.id.tv);
-
-//        OkHttpPresenter.get(url, new BeanCallback<String>() {
-//            @Override
-//            public void onSucceed(String result) {
-//                tv.setText(result);
-//            }
-//
-//            @Override
-//            public void onFailed(Throwable e) {
-//                Toast.makeText(MainActivity.this, "" + e.toString(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
+        // 自动取消要初始化一下
+        HttpUtils.init(getApplication());
+        // 测试
+        MainPresenter  presenter = new MainPresenter(this);
+        MainOKPresenter   okPresenter = new MainOKPresenter(this);
+        // 间接回调
         presenter.test(this);
-
+        // 直接回调
         okPresenter.test(new BeanCallback<String>() {
             @Override
             public void onSucceed(String result) {
