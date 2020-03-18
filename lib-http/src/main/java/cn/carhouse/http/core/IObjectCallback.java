@@ -14,8 +14,11 @@ package cn.carhouse.http.core;
 public interface IObjectCallback {
     /**
      * 请求成功回调事件处理
+     * @param json 返回的Json
+     * @param data 默认返回空，要自己解析
+     *
      */
-    void onSuccess(Object object,Class clazz);
+    void onSuccess(String json,Object data,Class clazz);
 
     /**
      * 请求失败回调事件处理

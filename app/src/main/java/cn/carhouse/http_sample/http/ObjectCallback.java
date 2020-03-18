@@ -2,6 +2,7 @@ package cn.carhouse.http_sample.http;
 
 
 import cn.carhouse.http.core.IObjectCallback;
+import cn.carhouse.http.util.GsonUtil;
 
 public class ObjectCallback implements IObjectCallback {
     private IObjectCallback callback;
@@ -11,12 +12,13 @@ public class ObjectCallback implements IObjectCallback {
     }
 
     @Override
-    public void onSuccess(final Object object, final Class clazz) {
+    public void onSuccess(final String json,final Object object, final Class clazz) {
         HandlerUtils.post(new Runnable() {
             @Override
             public void run() {
                 // TODO 真正处理逻辑的地方
-                callback.onSuccess(object, clazz);
+                Object data = GsonUtil.getGson().fromJson(json, clazz);
+                callback.onSuccess(json,data, clazz);
                 HandlerUtils.cancel(this);
             }
         });

@@ -9,6 +9,7 @@ import cn.carhouse.http.callback.StringCallback;
 import cn.carhouse.http.core.RequestParams;
 import cn.carhouse.http.core.RequestType;
 import cn.carhouse.http.util.GsonUtil;
+import cn.carhouse.http_sample.http.bean.BaseCore;
 
 /**
  * ================================================================
@@ -51,15 +52,32 @@ public abstract class BeanCallback<T> extends StringCallback<T> {
     @Override
     public void onSucceed(RequestParams params, final String result, boolean isSuccessful, int code) {
 
+        // 统一解析数据，后台返回如下：
+//        {
+//            "code": 200,
+//                "msg": "成功",
+//                "data": {
+//                    "uuid": "4a295aee95504855b2b4b4082dd76f18",
+//                    "expiredAt": 600
+//                }
+//        }
+        // 获取泛型
         Type actualType = ParameterTypeUtils.parameterType(this);
-        final T data = GsonUtil.getGson().fromJson(result, actualType);
+        // 创建BaseCore解析类型
+        ParameterizedTypeImpl parseType = new ParameterizedTypeImpl(BaseCore.class, new Type[]{actualType});
+        final BaseCore baseCore = GsonUtil.getGson().fromJson(result, parseType);
         // 1. 读取缓存
         // 2. 比较缓存，相同不处理
         // 3. 不相同，返回刷新
         HandlerUtils.post(new Runnable() {
             @Override
             public void run() {
-                onSucceed(data);
+                if (baseCore.isSucceed()) {
+                    onSucceed((T) baseCore.getData());
+                } else {
+                    onError(new RuntimeException(baseCore.getMsg()));
+                    return;
+                }
                 onAfter();
                 HandlerUtils.cancel(this);
             }

@@ -117,7 +117,7 @@ public class WarpCallback implements Callback {
         Class clazz = mParams.getClazz();
         if (objectCallback != null && clazz != null) {
             // 直接返回结果
-            objectCallback.onSuccess(json, clazz);
+            objectCallback.onSuccess(json, null,clazz);
             return true;
         }
         return false;

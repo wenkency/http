@@ -52,8 +52,8 @@ public class MainActivity extends AppCompatActivity implements IObjectCallback {
     }
 
     @Override
-    public void onSuccess(Object object, Class clazz) {
-        tv.setText(object.toString());
+    public void onSuccess(String json,Object object, Class clazz) {
+        tv.setText(json);
     }
 
     @Override
