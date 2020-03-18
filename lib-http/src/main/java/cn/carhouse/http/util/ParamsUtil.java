@@ -78,7 +78,6 @@ public class ParamsUtil {
     private static void addParams(MultipartBody.Builder builder, Map<String, Object> params) {
         if (params != null && !params.isEmpty()) {
             for (String key : params.keySet()) {
-                builder.addFormDataPart(key, params.get(key) + "");
                 Object value = params.get(key);
                 if (value instanceof File) {
                     // 处理文件 --> Object File

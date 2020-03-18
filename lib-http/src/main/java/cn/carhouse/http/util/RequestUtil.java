@@ -11,8 +11,6 @@ import java.util.Map;
 
 public class RequestUtil {
 
-    public static final Gson mGson = GsonUtil.getGson();
-
 
     public static Map<String, Object> getObjParams(Object obj) {
         Map<String, Object> list = new ArrayMap<>();
@@ -29,7 +27,7 @@ public class RequestUtil {
                     // 根据标识转成Json
                     FieldToJson toJson = field.getAnnotation(FieldToJson.class);
                     if (toJson != null) {
-                        list.put(name, mGson.toJson(value));
+                        list.put(name, GsonUtil.getGson().toJson(value));
                     } else {
                         list.put(name, value.toString());
                     }

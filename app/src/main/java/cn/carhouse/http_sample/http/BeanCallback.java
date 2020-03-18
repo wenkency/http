@@ -1,10 +1,14 @@
 package cn.carhouse.http_sample.http;
 
+import android.text.TextUtils;
+
+import java.lang.reflect.Type;
 import java.util.Map;
 
 import cn.carhouse.http.callback.StringCallback;
 import cn.carhouse.http.core.RequestParams;
 import cn.carhouse.http.core.RequestType;
+import cn.carhouse.http.util.GsonUtil;
 
 /**
  * ================================================================
@@ -22,7 +26,14 @@ public abstract class BeanCallback<T> extends StringCallback<T> {
     @Override
     public void onBefore(RequestParams params, RequestType type) {
         Map<String, String> headerParams = params.getHeaderParams();
-
+        // 获取token
+        String token = null;
+        // 获取到就加
+        if (!TextUtils.isEmpty(token)) {
+            // 1. 在这里统一加请求头就好
+            headerParams.put("token", "你缓存的token");
+        }
+        // 2. 返回
     }
 
     @Override
@@ -31,6 +42,7 @@ public abstract class BeanCallback<T> extends StringCallback<T> {
             @Override
             public void run() {
                 onFailed(e);
+                onAfter();
                 HandlerUtils.cancel(this);
             }
         });
@@ -38,16 +50,23 @@ public abstract class BeanCallback<T> extends StringCallback<T> {
 
     @Override
     public void onSucceed(RequestParams params, final String result, boolean isSuccessful, int code) {
+
+        Type actualType = ParameterTypeUtils.parameterType(this);
+        final T data = GsonUtil.getGson().fromJson(result, actualType);
+        // 1. 读取缓存
+        // 2. 比较缓存，相同不处理
+        // 3. 不相同，返回刷新
         HandlerUtils.post(new Runnable() {
             @Override
             public void run() {
-                onSucceed(result);
+                onSucceed(data);
+                onAfter();
                 HandlerUtils.cancel(this);
             }
         });
     }
 
-    public abstract void onSucceed(String result);
+    public abstract void onSucceed(T data);
 
     public abstract void onFailed(Throwable e);
 }
