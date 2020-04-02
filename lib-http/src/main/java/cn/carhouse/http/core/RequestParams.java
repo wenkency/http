@@ -33,7 +33,8 @@ public class RequestParams {
     // 请求头的参数
     private Map<String, String> headerParams;
 
-    private boolean isFormat = true;
+    // 格式化响应参数
+    private boolean isFormat = false;
 
     private Object mObjParams;
 

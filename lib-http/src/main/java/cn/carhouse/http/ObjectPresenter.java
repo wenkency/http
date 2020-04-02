@@ -27,8 +27,12 @@ public class ObjectPresenter {
     public ObjectPresenter() {
     }
 
-    public static ObjectPresenter getInstance() {
-        return new ObjectPresenter();
+    public static ObjectPresenter with() {
+        return with(null);
+    }
+
+    public static ObjectPresenter with(Activity activity) {
+        return new ObjectPresenter(activity);
     }
 
     /**
@@ -46,7 +50,7 @@ public class ObjectPresenter {
     }
 
     /**
-     * get请求
+     * 请求
      *
      * @param url 请求的URL
      */
@@ -57,6 +61,7 @@ public class ObjectPresenter {
                 .params(params)
                 .cache(false)
                 .autoCancel(true)
+                .format(false)
                 .tag(mTag)
                 .clazz(clazz)
                 .objectCallback(callback)
@@ -69,15 +74,15 @@ public class ObjectPresenter {
     }
 
     public <T> void get(String url, Object object, Class clazz, IObjectCallback callback) {
-        request(RequestType.GET, url, RequestUtil.getObjParams(object), clazz, callback);
+        get(url, RequestUtil.getObjParams(object), clazz, callback);
     }
 
     public <T> void get(String url, String key, String value, Class clazz, IObjectCallback callback) {
-        request(RequestType.GET, url, RequestUtil.getObjParams(key, value), clazz, callback);
+        get(url, RequestUtil.getObjParams(key, value), clazz, callback);
     }
 
     public <T> void get(String url, Class clazz, IObjectCallback callback) {
-        request(RequestType.GET, url, null, clazz, callback);
+        get(url, null, clazz, callback);
     }
 
     public <T> void post(String url, Object object, Class clazz, IObjectCallback callback) {
@@ -85,11 +90,11 @@ public class ObjectPresenter {
     }
 
     public <T> void post(String url, String key, String value, Class clazz, IObjectCallback callback) {
-        request(RequestType.POST, url, RequestUtil.getObjParams(key, value), clazz, callback);
+        post(url, RequestUtil.getObjParams(key, value), clazz, callback);
     }
 
     public <T> void post(String url, Class clazz, IObjectCallback callback) {
-        request(RequestType.POST, url, null, clazz, callback);
+        post(url, null, clazz, callback);
     }
 
 
@@ -98,11 +103,11 @@ public class ObjectPresenter {
     }
 
     public <T> void put(String url, String key, String value, Class clazz, IObjectCallback callback) {
-        request(RequestType.PUT, url, RequestUtil.getObjParams(key, value), clazz, callback);
+        put(url, RequestUtil.getObjParams(key, value), clazz, callback);
     }
 
     public <T> void put(String url, Class clazz, IObjectCallback callback) {
-        request(RequestType.PUT, url, null, clazz, callback);
+        put(url, null, clazz, callback);
     }
 
     public <T> void delete(String url, Object object, Class clazz, IObjectCallback callback) {
@@ -110,11 +115,28 @@ public class ObjectPresenter {
     }
 
     public <T> void delete(String url, String key, String value, Class clazz, IObjectCallback callback) {
-        request(RequestType.DELETE, url, RequestUtil.getObjParams(key, value), clazz, callback);
+        delete(url, RequestUtil.getObjParams(key, value), clazz, callback);
     }
 
     public <T> void delete(String url, Class clazz, IObjectCallback callback) {
-        request(RequestType.DELETE, url, null, clazz, callback);
+        delete(url, null, clazz, callback);
+    }
+
+
+    public <T> void form(String url, Map<String, Object> params, Class clazz, IObjectCallback callback) {
+        request(RequestType.FORM, url, params, clazz, callback);
+    }
+
+    public <T> void form(String url, Object object, Class clazz, IObjectCallback callback) {
+        form(url, RequestUtil.getObjParams(object), clazz, callback);
+    }
+
+    public <T> void form(String url, String key, String value, Class clazz, IObjectCallback callback) {
+        form(url, RequestUtil.getObjParams(key, value), clazz, callback);
+    }
+
+    public <T> void form(String url, Class clazz, IObjectCallback callback) {
+        form(url, null, clazz, callback);
     }
 
 }

@@ -14,6 +14,7 @@ import cn.carhouse.http.util.GsonUtil;
 import cn.carhouse.http.util.OkHttpClientUtil;
 import cn.carhouse.http.util.ParamsUtil;
 import okhttp3.Call;
+import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -27,6 +28,8 @@ public class RequestOkHttp implements IRequest {
     private static OkHttpClient mOkHttpClient = OkHttpClientUtil.getOkHttpClient();
     // Json 类型
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+    // FORM 类型
+    public static final MediaType FORM = MediaType.get("application/x-www-form-urlencoded; charset=utf-8");
 
 
     @Override
@@ -45,6 +48,38 @@ public class RequestOkHttp implements IRequest {
     }
 
     @Override
+    public void form(RequestParams requestParams) {
+        if (requestParams == null) {
+            return;
+        }
+        // 1. 请求URL
+        String url = requestParams.getUrl();
+        FormBody.Builder builder = new FormBody.Builder();
+        // 2. 请求参数
+        Map<String, Object> params = requestParams.getParams();
+        HttpLog.e("httpUrl-->" + url);
+        HttpLog.e("params-->" + ParamsUtil.formParams(GsonUtil.getGson().toJson(params)));
+
+        ParamsUtil.appendParams(builder, params);
+        FormBody formBody = builder.build();
+        Request.Builder build = new Request.Builder();
+        // 3. 添加请求头
+        ParamsUtil.appendHeadParams(build, requestParams.getHeaderParams());
+        Request request = build
+                .url(url)
+                .post(formBody)
+                .build();
+        // 6. 创建一个回调
+        Call call = mOkHttpClient.newCall(request);
+        // 7. 将请求缓存起来
+        CallUtil.getInstance().add(call);
+        // 8. 回调
+        call.enqueue(new WarpCallback(requestParams));
+
+
+    }
+
+    @Override
     public void put(RequestParams requestParams) {
         postOrPut(requestParams, RequestType.PUT);
     }
@@ -54,19 +89,20 @@ public class RequestOkHttp implements IRequest {
         if (requestParams == null) {
             return;
         }
-        Map<String, Object> params = requestParams.getParams();
-        // 拼接请求链接
+
+        // 1. 请求URL
         String url = requestParams.getUrl();
         HttpUrl.Builder builder = HttpUrl.parse(url).newBuilder();
-        if (params != null) {
-            ParamsUtil.appendParams(builder, params);
-        }
+        // 2. 请求参数
+        Map<String, Object> params = requestParams.getParams();
+        ParamsUtil.appendParams(builder, params);
+
         HttpUrl httpUrl = builder.build();
 
         HttpLog.e("httpUrl-->" + httpUrl.toString());
         HttpLog.e("params-->" + ParamsUtil.formParams(GsonUtil.getGson().toJson(params)));
 
-        //创建一个Request
+        // 3. 创建一个Request
         Request.Builder build = new Request.Builder().url(httpUrl);
         if (requestType == RequestType.GET) {
             build.get();
@@ -74,11 +110,9 @@ public class RequestOkHttp implements IRequest {
             build.delete();
         }
 
-        // 添加请求头
-        if (requestParams.getHeaderParams() != null) {
-            ParamsUtil.appendHeadParams(build, requestParams.getHeaderParams());
-        }
-        // 是不是要自动取消
+        // 4. 添加请求头
+        ParamsUtil.appendHeadParams(build, requestParams.getHeaderParams());
+        // 5. 是不是要自动取消
         if (requestParams.isAutoCancel()) {
             Object tag = requestParams.getTag();
             if (tag != null) {
@@ -86,10 +120,11 @@ public class RequestOkHttp implements IRequest {
             }
         }
         final Request request = build.build();
-        // 创建一个回调
+        // 6. 创建一个回调
         Call call = mOkHttpClient.newCall(request);
-        // 将请求缓存起来
+        // 7. 将请求缓存起来
         CallUtil.getInstance().add(call);
+        // 8. 回调
         call.enqueue(new WarpCallback(requestParams));
     }
 
@@ -98,27 +133,21 @@ public class RequestOkHttp implements IRequest {
             return;
         }
         Map<String, Object> params = requestParams.getParams();
-        // 请求体
+        // 1. 请求体
         String content = GsonUtil.getGson().toJson(params);
-        if (requestParams.isFormat()) {
-            content = ParamsUtil.formParams(content);
-        }
+
         HttpLog.e("httpUrl-->" + requestParams.getUrl());
         HttpLog.e("params-->" + ParamsUtil.formParams(content));
 
-
-        RequestBody body = RequestBody.create(JSON, content);
-        Request.Builder build = new Request.Builder()
-                .url(requestParams.getUrl());
+        RequestBody body = RequestBody.create(content, JSON);
+        Request.Builder build = new Request.Builder().url(requestParams.getUrl());
         if (requestType == RequestType.POST) {
             build.post(body);
         } else if (requestType == RequestType.PUT) {
             build.put(body);
         }
-        // 添加请求头
-        if (requestParams.getHeaderParams() != null) {
-            ParamsUtil.appendHeadParams(build, requestParams.getHeaderParams());
-        }
+        // 2. 添加请求头
+        ParamsUtil.appendHeadParams(build, requestParams.getHeaderParams());
         // 是不是要自动取消
         if (requestParams.isAutoCancel()) {
             Object tag = requestParams.getTag();
@@ -149,6 +178,8 @@ public class RequestOkHttp implements IRequest {
         Request.Builder build = new Request.Builder()
                 .url(requestParams.getUrl())
                 .post(exMultipartBody);
+        final Request request = build.build();
+
         // 是不是要自动取消
         if (requestParams.isAutoCancel()) {
             Object tag = requestParams.getTag();
@@ -156,8 +187,6 @@ public class RequestOkHttp implements IRequest {
                 build.tag(tag);
             }
         }
-        final Request request = build.build();
-
         // 创建一个回调
         Call call = mOkHttpClient.newCall(request);
         // 将请求缓存起来
@@ -178,6 +207,14 @@ public class RequestOkHttp implements IRequest {
             }
         }
         final Request request = build.build();
+
+        // 是不是要自动取消
+        if (requestParams.isAutoCancel()) {
+            Object tag = requestParams.getTag();
+            if (tag != null) {
+                build.tag(tag);
+            }
+        }
         // 创建一个回调
         Call call = mOkHttpClient.newCall(request);
         // 将请求缓存起来

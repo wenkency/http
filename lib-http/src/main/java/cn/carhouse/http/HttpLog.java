@@ -7,9 +7,15 @@ import android.util.Log;
  */
 public class HttpLog {
 
+    private static boolean isDebug = false;
+
     public static void e(String msg) {
-        if (BuildConfig.DEBUG) {
+        if (isDebug) {
             Log.e("HttpLog", msg);
         }
+    }
+
+    public static void setIsDebug(boolean isDebug) {
+        HttpLog.isDebug = isDebug;
     }
 }

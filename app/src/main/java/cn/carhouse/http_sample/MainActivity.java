@@ -6,14 +6,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.List;
-
-import cn.carhouse.http.HttpUtils;
-import cn.carhouse.http.ObjectPresenter;
-import cn.carhouse.http.OkHttpPresenter;
 import cn.carhouse.http.core.IObjectCallback;
 import cn.carhouse.http_sample.http.BeanCallback;
-import cn.carhouse.http_sample.http.ObjectCallback;
 import cn.carhouse.http_sample.presenter.MainOKPresenter;
 import cn.carhouse.http_sample.presenter.MainPresenter;
 
@@ -26,15 +20,12 @@ public class MainActivity extends AppCompatActivity implements IObjectCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tv = findViewById(R.id.tv);
-        // 自动取消要初始化一下
-        HttpUtils.init(getApplication());
-        // 测试
-        MainPresenter presenter = new MainPresenter(this);
-        MainOKPresenter okPresenter = new MainOKPresenter(this);
-        // 间接回调
-        presenter.test(this);
-        // 直接回调
-        okPresenter.test(new BeanCallback<String>() {
+        initNet1();
+    }
+
+    private void initNet1() {
+        // 方式一：直接回调
+        MainOKPresenter.test(this, new BeanCallback<String>() {
             @Override
             public void onSucceed(String result) {
                 tv.setText(result);
@@ -46,13 +37,15 @@ public class MainActivity extends AppCompatActivity implements IObjectCallback {
             }
         });
 
-        // 如果通过单例直接调用请求，不会自动取消
-        // ObjectPresenter.getInstance().get();
-        // OkHttpPresenter.getInstance().get();
+    }
+
+    private void initNet2() {
+        // 方式二：间接回调
+        MainPresenter.test(this, this);
     }
 
     @Override
-    public void onSuccess(String json,Object object, Class clazz) {
+    public void onSuccess(String json, Object object, Class clazz) {
         tv.setText(json);
     }
 

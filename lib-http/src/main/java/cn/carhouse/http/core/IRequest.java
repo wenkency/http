@@ -15,6 +15,11 @@ public interface IRequest {
     void post(RequestParams params);
 
     /**
+     * form请求
+     */
+    void form(RequestParams params);
+
+    /**
      * put请求
      */
     void put(RequestParams params);

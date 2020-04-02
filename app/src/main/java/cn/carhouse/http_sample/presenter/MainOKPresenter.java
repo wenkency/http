@@ -6,18 +6,11 @@ import cn.carhouse.http.OkHttpPresenter;
 import cn.carhouse.http.callback.StringCallback;
 import cn.carhouse.http_sample.http.bean.SendCoreBean;
 
-public class MainOKPresenter extends OkHttpPresenter {
-    public MainOKPresenter(Activity activity) {
-        super(activity);
+public class MainOKPresenter  {
+
+    public static void test(Activity activity,StringCallback<String> callback) {
+        String url = "https://www.baidu.com/";
+        OkHttpPresenter.with(activity).get(url,callback);
     }
 
-    public void test(StringCallback<String> callback) {
-        String url = "https://www.baidu.com/";
-        get(url, callback);
-    }
-
-    public void test2(StringCallback<SendCoreBean> callback) {
-        String url = "https://www.baidu.com/";
-        get(url, callback);
-    }
 }

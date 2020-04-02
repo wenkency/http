@@ -1,18 +1,17 @@
 package cn.carhouse.http;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 
 import java.util.Map;
 
+import cn.carhouse.http.callback.DefaultCallback;
 import cn.carhouse.http.core.ICallback;
 import cn.carhouse.http.core.IObjectCallback;
 import cn.carhouse.http.core.IRequest;
 import cn.carhouse.http.core.RequestFactory;
 import cn.carhouse.http.core.RequestParams;
 import cn.carhouse.http.core.RequestType;
-import cn.carhouse.http.callback.DefaultCallback;
 
 
 /**
@@ -209,6 +208,9 @@ public class HttpUtils {
             case DOWNLOAD:
                 mRequest.download(mParams);
                 break;
+            case FORM:
+                mRequest.form(mParams);
+                break;
         }
     }
 
@@ -220,14 +222,4 @@ public class HttpUtils {
         execute(mDefCallback);
     }
 
-    /**
-     * 不取消网络
-     * 在Activity调用一下
-     */
-    public static void unCancel(Activity activity) {
-        if (activity == null || activity.getWindow() == null || activity.getWindow().getDecorView() == null) {
-            return;
-        }
-        activity.getWindow().getDecorView().setTag(R.id.net_cancel, "lib-http");
-    }
 }

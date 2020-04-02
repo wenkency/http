@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import cn.carhouse.http.HttpLog;
+import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -29,6 +30,26 @@ public class ParamsUtil {
                 .replace("}\"", "}")
                 .replace("\"[", "[")
                 .replace("]\"", "]");
+    }
+
+    /**
+     * 参数拼接
+     */
+    public static void appendParams(FormBody.Builder builder, Map<String, Object> params) {
+        if (builder == null || params == null || params.isEmpty()) {
+            return;
+        }
+        if (params != null && !params.isEmpty()) {
+            for (String key : params.keySet()) {
+                Object obj = params.get(key);
+                if (obj != null) {
+                    String value = obj.toString();
+                    if (!TextUtils.isEmpty(value)) {
+                        builder.add(key, value);
+                    }
+                }
+            }
+        }
     }
 
     /**

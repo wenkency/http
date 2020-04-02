@@ -8,7 +8,9 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * 请求参数封装类
+ */
 public class RequestUtil {
 
 

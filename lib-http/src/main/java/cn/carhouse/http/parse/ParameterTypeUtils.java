@@ -1,4 +1,4 @@
-package cn.carhouse.http_sample.http;
+package cn.carhouse.http.parse;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -22,5 +22,15 @@ public class ParameterTypeUtils {
             actualType = new ParameterizedTypeImpl(List.class, new Type[]{typeOfList});
         }
         return actualType;
+    }
+
+    public static boolean isString(Type type) {
+        if (type instanceof Object) {
+            String name = type.toString();
+            if (name.contains("java.lang.String")) {
+                return true;
+            }
+        }
+        return false;
     }
 }

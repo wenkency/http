@@ -5,7 +5,6 @@ import android.os.Environment;
 import android.text.TextUtils;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * 创建目录
@@ -15,17 +14,10 @@ public class NetFileUtil {
 
     // 文件
     public static final String DIR_FILE = "file";
-    // APK
-    public static final String DIR_APK = "apk";
-    // 图片
-    public static final String DIR_IMAGE = "image";
-    // 数据库
-    public static final String DIR_DB = "database";// 数据库的目录
     private static Context mContext;
-    private static int temp = 1;
 
     public static void init(Context context) {
-        mContext = context;
+        mContext = context.getApplicationContext();
     }
 
     /**
@@ -58,28 +50,6 @@ public class NetFileUtil {
 
 
     /**
-     * 创建图片的路径
-     */
-    public static File createImageFilePath() {
-        File directory = createImageDir();
-        File photoFile = new File(directory, getFileName());
-        if (photoFile != null && !photoFile.exists()) {
-            try {
-                photoFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return photoFile;
-
-    }
-
-    public static String getFileName() {
-        long time = System.currentTimeMillis() + temp++;
-        return "IMG_" + (time) + ".jpg";
-    }
-
-    /**
      * 创建文件的存放目录
      *
      * @return
@@ -88,20 +58,6 @@ public class NetFileUtil {
         return createCacheDir(DIR_FILE);
     }
 
-    public static File createApkDir() {
-        return createCacheDir(DIR_APK);
-    }
-
-    public static File createImageDir() {
-        return createCacheDir(DIR_IMAGE);
-    }
-
-    /**
-     * 创建DB的DIR
-     */
-    public static File createDBDir() {
-        return createCacheDir(DIR_DB);
-    }
 
     /**
      * 删除文件夹

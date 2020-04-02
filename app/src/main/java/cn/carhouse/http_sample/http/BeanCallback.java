@@ -8,8 +8,8 @@ import java.util.Map;
 import cn.carhouse.http.callback.StringCallback;
 import cn.carhouse.http.core.RequestParams;
 import cn.carhouse.http.core.RequestType;
+import cn.carhouse.http.parse.ParameterTypeUtils;
 import cn.carhouse.http.util.GsonUtil;
-import cn.carhouse.http_sample.http.bean.BaseCore;
 
 /**
  * ================================================================
@@ -26,15 +26,6 @@ public abstract class BeanCallback<T> extends StringCallback<T> {
 
     @Override
     public void onBefore(RequestParams params, RequestType type) {
-        Map<String, String> headerParams = params.getHeaderParams();
-        // 获取token
-        String token = null;
-        // 获取到就加
-        if (!TextUtils.isEmpty(token)) {
-            // 1. 在这里统一加请求头就好
-            headerParams.put("token", "你缓存的token");
-        }
-        // 2. 返回
     }
 
     @Override
@@ -44,42 +35,31 @@ public abstract class BeanCallback<T> extends StringCallback<T> {
             public void run() {
                 onFailed(e);
                 onAfter();
-                HandlerUtils.cancel(this);
             }
         });
     }
 
     @Override
     public void onSucceed(RequestParams params, final String result, boolean isSuccessful, int code) {
-
-        // 统一解析数据，后台返回如下：
-//        {
-//            "code": 200,
-//                "msg": "成功",
-//                "data": {
-//                    "uuid": "4a295aee95504855b2b4b4082dd76f18",
-//                    "expiredAt": 600
-//                }
-//        }
-        // 获取泛型
+        // 1. 获取泛型
         Type actualType = ParameterTypeUtils.parameterType(this);
-        // 创建BaseCore解析类型
-        ParameterizedTypeImpl parseType = new ParameterizedTypeImpl(BaseCore.class, new Type[]{actualType});
-        final BaseCore baseCore = GsonUtil.getGson().fromJson(result, parseType);
-        // 1. 读取缓存
-        // 2. 比较缓存，相同不处理
+        // 2. 如果是字符串就不处理
+        final T data;
+        if (!ParameterTypeUtils.isString(actualType)) {
+            data = GsonUtil.getGson().fromJson(result, actualType);
+        } else {
+            data = null;
+        }
         // 3. 不相同，返回刷新
         HandlerUtils.post(new Runnable() {
             @Override
             public void run() {
-                if (baseCore.isSucceed()) {
-                    onSucceed((T) baseCore.getData());
+                if (data != null) {
+                    onSucceed(data);
                 } else {
-                    onError(new RuntimeException(baseCore.getMsg()));
-                    return;
+                    onSucceed((T) result);
                 }
                 onAfter();
-                HandlerUtils.cancel(this);
             }
         });
     }

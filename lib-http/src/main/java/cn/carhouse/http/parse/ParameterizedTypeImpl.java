@@ -1,4 +1,4 @@
-package cn.carhouse.http_sample.http;
+package cn.carhouse.http.parse;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

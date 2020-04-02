@@ -12,14 +12,18 @@ public class ObjectCallback implements IObjectCallback {
     }
 
     @Override
-    public void onSuccess(final String json,final Object object, final Class clazz) {
+    public void onSuccess(final String json, final Object object, final Class clazz) {
         HandlerUtils.post(new Runnable() {
             @Override
             public void run() {
-                // TODO 真正处理逻辑的地方
-                Object data = GsonUtil.getGson().fromJson(json, clazz);
-                callback.onSuccess(json,data, clazz);
-                HandlerUtils.cancel(this);
+                // 如果是字符串类型
+                if (clazz == String.class) {
+                    callback.onSuccess(json, json, clazz);
+                } else {
+                    Object data = GsonUtil.getGson().fromJson(json, clazz);
+                    callback.onSuccess(json, data, clazz);
+                }
+
             }
         });
 
@@ -31,7 +35,6 @@ public class ObjectCallback implements IObjectCallback {
             @Override
             public void run() {
                 callback.onError(e);
-                HandlerUtils.cancel(this);
             }
         });
     }

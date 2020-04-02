@@ -1,5 +1,5 @@
 # http
-okhttp网络请求封装库，支持get post put delete请求，支持文件下载和上传。
+okhttp3网络请求封装库，支持get post put delete 表单(form)请求，支持文件下载和上传。
 
 ### 引入
 
@@ -27,15 +27,12 @@ public class MainActivity extends AppCompatActivity implements IObjectCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tv = findViewById(R.id.tv);
-        // 自动取消要初始化一下
-        HttpUtils.init(getApplication());
-        // 测试
-        MainPresenter  presenter = new MainPresenter(this);
-        MainOKPresenter   okPresenter = new MainOKPresenter(this);
-        // 间接回调--可同时请求多个网络
-        presenter.test(this);
-        // 直接回调
-        okPresenter.test(new BeanCallback<String>() {
+        initNet1();
+    }
+
+    private void initNet1() {
+        // 方式一：直接回调
+        MainOKPresenter.test(this, new BeanCallback<String>() {
             @Override
             public void onSucceed(String result) {
                 tv.setText(result);
@@ -46,20 +43,24 @@ public class MainActivity extends AppCompatActivity implements IObjectCallback {
                 Toast.makeText(MainActivity.this, "" + e.toString(), Toast.LENGTH_SHORT).show();
             }
         });
-        // 如果通过getInstance方法调用请求，要自己设置和取消TAG，建议这样使用
-        // ObjectPresenter.getInstance().get();
-        // OkHttpPresenter.getInstance().get();
+
     }
-    // 间接成功回调
+
+    private void initNet2() {
+        // 方式二：间接回调
+        MainPresenter.test(this, this);
+    }
+
     @Override
-    public void onSuccess(Object object, Class clazz) {
-        tv.setText(object.toString());
+    public void onSuccess(String json, Object object, Class clazz) {
+        tv.setText(json);
     }
-    // 间接失败回调
+
     @Override
     public void onError(Exception e) {
         Toast.makeText(MainActivity.this, "" + e.toString(), Toast.LENGTH_SHORT).show();
     }
+}
 
 ```
 

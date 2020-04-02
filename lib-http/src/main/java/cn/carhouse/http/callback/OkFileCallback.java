@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Looper;
 
 
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,11 +27,13 @@ public class OkFileCallback implements Callback {
     private String mFileName;
     private ICallback mCallback;
     private Context mContext;
+    private String mFileDir;
 
     public OkFileCallback(RequestParams params) {
         this.mContext = params.getContext();
         this.mCallback = params.getCallback();
         this.mFileName = params.getFileName();
+        this.mFileDir = params.getFileDir();
     }
 
     @Override
@@ -54,10 +55,7 @@ public class OkFileCallback implements Callback {
             final long total = response.body().contentLength();
             long sum = 0;
             NetFileUtil.init(mContext);
-            File dir = NetFileUtil.createFileDir();
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
+            File dir =  NetFileUtil.createCacheDir(mFileDir);
             final File file = new File(dir, mFileName);
             fos = new FileOutputStream(file);
             while ((len = is.read(buf)) != -1) {
@@ -70,7 +68,6 @@ public class OkFileCallback implements Callback {
                         mCallback.onProgress(finalSum * 100f / total, finalSum, total);
                     }
                 });
-
             }
             fos.flush();
             mHandler.post(new Runnable() {
