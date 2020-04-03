@@ -77,10 +77,10 @@ public class ParamsUtil {
      */
     public static void appendHeadParams(Request.Builder build, Map<String, String> params) {
         if (build != null && params != null && !params.isEmpty()) {
+            HttpLog.e("headParams-->" + ParamsUtil.formParams(GsonUtil.getGson().toJson(params)));
             for (String key : params.keySet()) {
                 build.addHeader(key, params.get(key));
             }
-            HttpLog.e("headParams-->" + ParamsUtil.formParams(GsonUtil.getGson().toJson(params)));
         }
 
     }
