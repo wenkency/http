@@ -13,7 +13,7 @@ public class ObjectCallback implements IObjectCallback {
 
     @Override
     public void onSuccess(final String json, final Object object, final Class clazz) {
-        HandlerUtils.post(new Runnable() {
+        HttpHandler.post(new Runnable() {
             @Override
             public void run() {
                 // 如果是字符串类型
@@ -31,7 +31,7 @@ public class ObjectCallback implements IObjectCallback {
 
     @Override
     public void onError(final Exception e) {
-        HandlerUtils.post(new Runnable() {
+        HttpHandler.post(new Runnable() {
             @Override
             public void run() {
                 callback.onError(e);

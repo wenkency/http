@@ -1,9 +1,6 @@
 package cn.carhouse.http_sample.http;
 
-import android.text.TextUtils;
-
 import java.lang.reflect.Type;
-import java.util.Map;
 
 import cn.carhouse.http.callback.StringCallback;
 import cn.carhouse.http.core.RequestParams;
@@ -30,7 +27,7 @@ public abstract class BeanCallback<T> extends StringCallback<T> {
 
     @Override
     public void onError(final Throwable e) {
-        HandlerUtils.post(new Runnable() {
+        HttpHandler.post(new Runnable() {
             @Override
             public void run() {
                 onFailed(e);
@@ -51,7 +48,7 @@ public abstract class BeanCallback<T> extends StringCallback<T> {
             data = null;
         }
         // 3. 不相同，返回刷新
-        HandlerUtils.post(new Runnable() {
+        HttpHandler.post(new Runnable() {
             @Override
             public void run() {
                 if (data != null) {

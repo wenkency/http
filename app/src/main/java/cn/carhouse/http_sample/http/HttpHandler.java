@@ -6,7 +6,7 @@ import android.os.Looper;
 /**
  * Handler工具类
  */
-public class HandlerUtils {
+public class HttpHandler {
     private static Handler mHandler = new Handler(Looper.getMainLooper());
 
     public static void post(Runnable runnable) {

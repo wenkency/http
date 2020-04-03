@@ -139,7 +139,7 @@ public class RequestOkHttp implements IRequest {
         HttpLog.e("httpUrl-->" + requestParams.getUrl());
         HttpLog.e("params-->" + ParamsUtil.formParams(content));
 
-        RequestBody body = RequestBody.create(content, JSON);
+        RequestBody body = RequestBody.create(JSON, content);
         Request.Builder build = new Request.Builder().url(requestParams.getUrl());
         if (requestType == RequestType.POST) {
             build.post(body);
